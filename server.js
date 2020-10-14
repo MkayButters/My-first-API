@@ -56,10 +56,15 @@ function handleWeather(request, response) {
     try {
         const output = []
         const geoData = require('./data/weather.json');
-        geoData.data.forEach(weatherData => {
-            const weather = new Weather(weatherData)
-            output.push(weather)
-        });
+        if (data.city_name !== 'seattle') {
+            response.status(500).send("Sorry, something went wrong")
+        }
+        else {
+            geoData.data.forEach(weatherData => {
+                const weather = new Weather(weatherData)
+                output.push(weather)
+            });
+        }
         response.json(output);
     } catch {
         response.status(500).send('sorry something broke.');
