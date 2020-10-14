@@ -40,7 +40,7 @@ function handleLocation(request, response) {
         const locationData = new Location(city, geoData)
         response.json(locationData);
     } catch {
-        response.status(500).send('sorry something broke.');
+        response.status(500).send('sorry something broke1.');
     }
 }
 app.get('*', (request, response) => {
@@ -56,20 +56,19 @@ function handleWeather(request, response) {
     try {
         const output = []
         const geoData = require('./data/weather.json');
-        if (data.city_name !== 'seattle') {
-            response.status(500).send("Sorry, something went wrong")
-        }
-        else {
             geoData.data.forEach(weatherData => {
                 const weather = new Weather(weatherData)
                 output.push(weather)
+                response.json(output);
             });
         }
-        response.json(output);
-    } catch {
-        response.status(500).send('sorry something broke.');
-    }
+    catch{
+        if (data.city_name !== 'seattle') {
+            response.status(500).send("Sorry, something went wrong")
+        }
+    }    
 }
+
 app.listen(PORT, () => {
     console.log(`server up: ${PORT}`);
 });
