@@ -37,6 +37,9 @@ function handleLocation(request, response) {
     try {
         const geoData = require('./data/location.json');
         const city = request.query.city
+        if (city.toLowerCase() !== "lynnwood"){
+            response.status(500).send('Try again, something broke.')
+        }
         const locationData = new Location(city, geoData)
         response.json(locationData);
     } catch {
@@ -59,8 +62,8 @@ function handleWeather(request, response) {
             geoData.data.forEach(weatherData => {
                 const weather = new Weather(weatherData)
                 output.push(weather)
-                response.json(output);
             });
+            response.json(output);
         }
     catch{
         if (data.city_name !== 'seattle') {
