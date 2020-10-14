@@ -4,15 +4,17 @@
 **Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)
 
 ## Overview
-<!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
+I am building this to understand API's and the way they work to get more familiar with them and the proccess in which they are created and deployed
 
 ## Getting Started
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+First you must build the repository out. 
 
 ## Architecture
+By using .json files to hold a set of information, we are pulling parts of it out and pasting it onto the website so it may be displayed for the user to see.  JavaScript language. Libraries include express, cors, and dotenv
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
 
 ## Change Log
+
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
 
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource.

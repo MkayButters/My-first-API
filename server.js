@@ -22,6 +22,16 @@ app.get('/seattle' , (request, response) => {
 
 app.get('/location', handleLocation);
 
+// function Weather(name , geoData) {
+// this.city_name = name
+// this.
+
+
+// }
+
+
+
+
 function Location(city , geoData) {
 
 this.search_query = city;
@@ -43,3 +53,17 @@ try {
 app.get('*', (request, response) => {
     response.status(404).send('not found')
 });
+
+app.listen(PORT, () => {
+    console.log(`server up: ${PORT}`);
+  });
+// function handleLocation(request, response) {
+//     try {
+//         const geoData = require ('./data/weather.json');
+//         const city = request.query.city
+//         const locationData = new Location(city, geoData)
+//         response.json(locationData);
+//     } catch {
+//         response.status(500).send('sorry something broke.');
+//         }
+//     }
