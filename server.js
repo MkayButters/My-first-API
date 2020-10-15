@@ -17,16 +17,11 @@ app.use(cors());
 app.get('/', (request, response) => {
     response.send('my homepage');
 });
-
-app.get('/seattle', (request, response) => {
-    response.json({ location: 'seattle', temp: '-12 deg' })
-});
-
 app.get('/location', handleLocation);
 
 app.get('/weather', handleWeather);
 
-app.get('trails')
+app.get('/trails', handleTrails)
 
 
 
@@ -70,7 +65,6 @@ function handleWeather(request, response) {
     };
     superagent.get(url)
         .query(queryParams)
-        // .then((data) => data.json())
         .then((data) => {
             const results = data.body;
             const resultsOfWeather = results.data.map(entry => {
@@ -82,11 +76,46 @@ function handleWeather(request, response) {
             console.log(error, "error")
             response.status(500).send('My sincere apologizes, something went wrong.');
         });
-    }
-        function Weather(geoData) {
-            this.forecast = geoData.weather.description
-            this.time = geoData.valid_date
-        }
+}
+function Weather(geoData) {
+    this.forecast = geoData.weather.description
+    this.time = geoData.valid_date
+}
+
+function handleTrails(request, response) {
+    const url = `https://www.hikingproject.com/data/get-trails`;
+    const queryParams = {
+        lat: request.query.latitude,
+        lon: request.query.longitude,
+        key: process.env.TRAIL_API_KEY,
+    };
+
+    superagent.get(url)
+        .query(queryParams)
+        .then((trails) => {
+            const results = trails.body;
+            const resultsOfTrails = results.trails.map(entry => {
+                return new Trails(entry)
+            });
+            response.json(resultsOfTrails)
+        })
+        .catch((error) => {
+            console.log(error, "error")
+            response.status(500).send('My sincere apologizes, something went wrong.');
+        });
+}
+
+function Trails(geoData) {
+    this.name = geoData.name
+    this.location = geoData.location
+    this.length = geoData.length
+    this.stars = geoData.stars
+    this.star_votes = geoData.starVotes
+    this.summary = geoData.summary
+    this.trail_url = geoData.url
+    this.conditions = geoData.conditionDetails
+    this.conditions_date_time = geoData.conditionDate
+}
 app.listen(PORT, () => {
     console.log(`server up: ${PORT}`);
 });
