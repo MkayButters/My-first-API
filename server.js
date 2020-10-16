@@ -2,6 +2,9 @@
 
 require('dotenv').config();
 
+const pg = require('pg');
+const client = new pg.Client(process.env.DATABASE_URL);
+
 const express = require('express');
 
 const superagent = require('superagent');
@@ -11,6 +14,8 @@ const cors = require('cors');
 const app = express();
 
 const PORT = process.env.PORT;
+
+const locations = {};
 
 app.use(cors());
 
@@ -31,7 +36,11 @@ function Location(city, geoData) {
     this.latitude = geoData.lat
     this.longitude = geoData.lon
 }
+if (locations[city]) {
+    response.send(locations[city]);
+  }
 
+  else {
 function handleLocation(request, response) {
     let city = request.query.city;
     let key = process.env.GEOCODE_API_KEY;
@@ -49,7 +58,7 @@ function handleLocation(request, response) {
 app.get('*', (request, response) => {
     response.status(404).send('not found')
 });
-
+  }
 
 function handleWeather(request, response) {
     console.log(request.query)
@@ -116,7 +125,13 @@ function Trails(geoData) {
     this.conditions = geoData.conditionDetails
     this.conditions_date_time = geoData.conditionDate
 }
+
+
+client.connect().then(
 app.listen(PORT, () => {
     console.log(`server up: ${PORT}`);
+}))
+.catch(error => {
+    console.error(error)
 });
 
