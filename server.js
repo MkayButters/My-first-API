@@ -3,6 +3,7 @@
 require('dotenv').config();
 
 const pg = require('pg');
+
 const client = new pg.Client(process.env.DATABASE_URL);
 
 const express = require('express');
@@ -36,12 +37,12 @@ function Location(city, geoData) {
     this.latitude = geoData.lat
     this.longitude = geoData.lon
 }
-if (locations[city]) {
-    response.send(locations[city]);
-  }
-
-  else {
 function handleLocation(request, response) {
+    if (locations[city]) {
+        response.send(locations[city]);
+      }
+    
+      else {
     let city = request.query.city;
     let key = process.env.GEOCODE_API_KEY;
     const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json&limit=1`;
