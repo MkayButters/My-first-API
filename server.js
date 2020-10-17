@@ -27,7 +27,7 @@ app.get('/location', handleLocation);
       
     client.query(SQL)
       .then( results => {
-        res.status(200).json(results);
+        status(200).json(results);
       })
       .catch( err => {
         console.error('db error:', err);
