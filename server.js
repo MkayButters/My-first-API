@@ -16,14 +16,23 @@ const app = express();
 
 const PORT = process.env.PORT;
 
-const locations = {};
-
 app.use(cors());
 
 app.get('/', (request, response) => {
     response.send('my homepage');
 });
 app.get('/location', handleLocation);
+
+    let SQL = 'SELECT * FROM search_query';
+      
+    client.query(SQL)
+      .then( results => {
+        res.status(200).json(results);
+      })
+      .catch( err => {
+        console.error('db error:', err);
+      })
+  
 
 app.get('/weather', handleWeather);
 
@@ -38,11 +47,6 @@ function Location(city, geoData) {
     this.longitude = geoData.lon
 }
 function handleLocation(request, response) {
-    if (locations[city]) {
-        response.send(locations[city]);
-      }
-    
-      else {
     let city = request.query.city;
     let key = process.env.GEOCODE_API_KEY;
     const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json&limit=1`;
@@ -59,7 +63,7 @@ function handleLocation(request, response) {
 app.get('*', (request, response) => {
     response.status(404).send('not found')
 });
-  }
+
 
 function handleWeather(request, response) {
     console.log(request.query)
