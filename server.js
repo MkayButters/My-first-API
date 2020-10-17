@@ -46,13 +46,10 @@ function handleLocation(request, response) {
         .then(results => {
             if (results.rows.length > 0) {
                 //things were in the database
-                console.log("found in database")
-                console.log(results.rows)
                 response.status(200).send(results.rows[0])
             }
             else {
                 //the city was not in the database
-                console.log('this is the else block')
                 let key = process.env.GEOCODE_API_KEY;
                 const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json&limit=1`;
                 return superagent.get(url)
@@ -61,7 +58,9 @@ function handleLocation(request, response) {
                         const location = new Location(city, geoData);
                         //this is where we need to store the location info into the database
                         //before we respond
-                        response.json(location)
+                        const insertSQL = 'INSERT INTO locations (latitude, longitude, formatted_query, search_query) VALUES ($1 , $2 , $3 , $4)'
+                        const insertValues = [location.latitude, location.longitude, location.formatted_query, location.search_query];
+                        client.query(insertSQL, insertValues).then(response.json(location));
                     })
                     .catch(() => {
                         return response.status(500).send('So sorry, something went wrong.');
@@ -78,7 +77,6 @@ app.get('*', (request, response) => {
 
 
 function handleWeather(request, response) {
-    console.log(request.query)
 
     const url = 'http://api.weatherbit.io/v2.0/forecast/daily';
 
