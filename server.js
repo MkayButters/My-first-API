@@ -23,7 +23,7 @@ app.get('/', (request, response) => {
 });
 app.get('/location', handleLocation);
 
-    let SQL = 'SELECT * FROM search_query';
+    let SQL = 'SELECT * FROM locations';
       
     client.query(SQL)
       .then( results => {
