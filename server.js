@@ -26,9 +26,11 @@ app.get('/location', handleLocation);
 
 app.get('/weather', handleWeather);
 
-app.get('/trails', handleTrails)
+app.get('/trails', handleTrails);
 
+app.get('/movies', handleMovies);
 
+app.get('/yelp', handleReviews);
 
 function Location(city, geoData) {
     this.search_query = city;
@@ -139,6 +141,81 @@ function Trails(geoData) {
     this.trail_url = geoData.url
     this.conditions = geoData.conditionDetails
     this.conditions_date_time = geoData.conditionDate
+}
+
+function handleMovies(request, response) {
+    let location = request.query.search_query
+    const url = `https://api.themoviedb.org/3/search/movie/?api_key=${process.env.MOVIE_API_KEY}&language=en-US&page=1&query=${location}`;
+    const queryParams = {
+        key: process.env.MOVIE_API_KEY,
+    };
+
+    superagent.get(url)
+        .query(queryParams)
+        .then((movies) => {
+            const results = movies.body.results;
+            const resultsOfMovies = results.map(entry => {
+                return new Movies(entry)
+            });
+            response.json(resultsOfMovies)
+        })
+        .catch((error) => {
+            console.log(error, "error")
+            response.status(500).send('My sincere apologizes, something went wrong.');
+        });
+}
+
+function Movies(geoData) {
+    this.title = geoData.title,
+        this.overview = geoData.overview,
+        this.average_votes = geoData.average_votes,
+        this.total_votes = geoData.total_votes,
+        this.image_url = geoData.image_url
+    this.popularity = geoData.popularity
+    this.released_on = geoData.released_on
+}
+
+
+function handleReviews(request, response) {
+    let location = request.query.search_query
+    let page = parseInt(request.query.page)
+    const url = `https://api.yelp.com/v3/businesses/search?location=${location}`;
+    const queryParams = {
+        key: process.env.YELP_API_KEY,
+    };
+
+    superagent.get(url)
+        .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+        .query(queryParams)
+        .then((reviews) => {
+            const results = reviews.body.businesses;
+            let pageNumber = 1
+            let counter = 1
+            let thisPage = []
+            results.forEach(entry => {
+                if (counter % 5 === 0) pageNumber++
+                if (pageNumber === page) {
+                    thisPage.push(new Reviews(entry, pageNumber))
+                }
+                counter++
+            });
+            console.log(thisPage)
+            response.json(thisPage)
+        })
+        .catch((error) => {
+            console.log(error, "error")
+            response.status(500).send('My sincere apologizes, something went wrong.');
+        });
+}
+
+
+function Reviews(geoData, page) {
+    this.name = geoData.name,
+        this.image_url = geoData.image_url,
+        this.price = geoData.price,
+        this.rating = geoData.rating,
+        this.url = geoData.url,
+        this.page = page
 }
 
 
